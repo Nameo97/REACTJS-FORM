@@ -3,8 +3,18 @@ import { connect } from "react-redux";
 import { deleteUser, editUser } from "../../store/actions";
 
 class DanhSachSinhVien extends Component {
+  state = {
+    mangSinhVien: [],
+  };
+  static getDerivedStateFromProps = (nextProps, currentState) => {
+    if (nextProps.svSearch.length !== 0) {
+      return (currentState.mangSinhVien = nextProps.svSearch);
+    }
+    return (currentState.mangSinhVien = nextProps.mangSinhVien);
+  };
   render() {
-    const { mangSinhVien } = this.props;
+    const { mangSinhVien } = this.state;
+    const { flag } = this.props;
     // console.log(mangSinhVien);
     return (
       <div className="mt-10">
@@ -22,7 +32,13 @@ class DanhSachSinhVien extends Component {
               </tr>
             </thead>
             <tbody className="border-b text-lg">
-              {mangSinhVien.map((item, index) => (
+              {!flag ? (
+              <tr className="border-2">
+                <td className="text-center text-3xl" colSpan={5}>
+                  Không tìm thấy kết quả này
+                </td>
+              </tr>
+            ) :(mangSinhVien.map((item, index) => (
                 <tr key={item.id}>
                   <td></td>
                   <td>{item.maSV}</td>
@@ -45,11 +61,11 @@ class DanhSachSinhVien extends Component {
                         this.props.dispatch(editUser(item.id));
                       }}
                     >
-                      Edit
+                      Sửa
                     </button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
@@ -60,7 +76,7 @@ class DanhSachSinhVien extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    mangSinhVien: state.baiTapQuanLySinhVien.mangSinhVien,
+    ...state.baiTapQuanLySinhVien,
   };
 };
 
